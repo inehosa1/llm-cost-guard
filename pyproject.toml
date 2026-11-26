@@ -1,0 +1,58 @@
+[project]
+name = "llm-cost-guard"
+version = "0.1.0"
+description = "Answer what you can for free before calling a paid LLM: rules, small talk, prompt-injection checks, a topic gate and a semantic cache."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Ricardo Andrés Arango Ruiz" }]
+requires-python = ">=3.12"
+dependencies = []
+keywords = ["llm", "rag", "cost", "guardrails", "cache"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Typing :: Typed",
+]
+
+[project.urls]
+Repository = "https://github.com/inehosa1/llm-cost-guard"
+
+[dependency-groups]
+dev = ["pytest>=8", "pytest-cov>=6", "mypy>=1.13", "ruff>=0.8"]
+
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "RUF", "PT", "N", "C4", "PL", "TRY", "D"]
+ignore = [
+  "D105", "D107", "D203", "D213",  # docstring style: Google-ish, no docstrings on dunders
+  "TRY003",                         # short messages in ValueError are fine
+  "PLR2004",                        # magic values in comparisons (tests, thresholds)
+  "PLR0913",                        # keyword-only options are explicit enough
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "PLR2004"]
+"examples/**" = ["D"]
+"src/llm_cost_guard/layers.py" = ["BLE001"]  # the topic gate must survive any classifier error
+
+[tool.mypy]
+strict = true
+files = ["src", "tests", "examples"]
+
+[tool.pytest.ini_options]
+addopts = "--cov=llm_cost_guard --cov-branch --cov-report=term-missing --doctest-modules"
+testpaths = ["tests", "src"]
+
+[tool.coverage.report]
+fail_under = 100
+exclude_lines = ["pragma: no cover", "\\.\\.\\.$"]
